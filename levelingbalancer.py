@@ -85,7 +85,7 @@ class GameProgressionEcosystemTuner:
         
         ttk.Separator(self.left_frame, orient='horizontal').pack(fill='x', pady=10)
         
-        # --- SECTION 2: DYNAMIC ECOSYSTEM LIST CONTAINER ---
+        # --- SECTION 2: DYNAMIC SCROLLABLE ECOSYSTEM LIST CONTAINER ---
         tk.Label(self.left_frame, text="2. Enemy Population & Base Yields", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w", pady=(0, 5))
         
         # Headers Row
@@ -95,9 +95,28 @@ class GameProgressionEcosystemTuner:
         tk.Label(headers, text="Base Yield", font=("Arial", 9, "bold"), bg="#f8f9fa", width=8, anchor="center").pack(side=tk.LEFT, padx=10)
         tk.Label(headers, text="Total Spawned", font=("Arial", 9, "bold"), bg="#f8f9fa", width=12, anchor="center").pack(side=tk.LEFT, padx=5)
         
-        # Scrollable container frame for enemy list rows
-        self.enemies_container = tk.Frame(self.left_frame, bg="#f8f9fa")
-        self.enemies_container.pack(fill=tk.BOTH, expand=True)
+        # Outer structural framework to isolate canvas and scrollbar mechanics
+        scroll_outer = tk.Frame(self.left_frame, bg="#f8f9fa")
+        scroll_outer.pack(fill=tk.BOTH, expand=True)
+        
+        # Base UI View Window Canvas viewport layout allocation
+        self.enemies_canvas = tk.Canvas(scroll_outer, bg="#f8f9fa", bd=0, highlightthickness=0)
+        self.enemies_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Interface layout sidebar track scroll widget anchor
+        scrollbar = ttk.Scrollbar(scroll_outer, orient=tk.VERTICAL, command=self.enemies_canvas.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.enemies_canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Dynamic internal subframe component mount address reference target
+        self.enemies_container = tk.Frame(self.enemies_canvas, bg="#f8f9fa")
+        
+        # Window structure layout bounding geometric anchor
+        self.canvas_window = self.enemies_canvas.create_window((0, 0), window=self.enemies_container, anchor="nw")
+        
+        # Live tracking recalculation bindings
+        self.enemies_container.bind("<Configure>", self._on_frame_configure)
+        self.enemies_canvas.bind("<Configure>", self._on_canvas_configure)
         
         ttk.Separator(self.left_frame, orient='horizontal').pack(fill='x', pady=10)
         
@@ -122,6 +141,14 @@ class GameProgressionEcosystemTuner:
         tk.Label(right_frame, text="Ecosystem Normalization Matrices", font=("Arial", 11, "bold"), bg="white").pack(anchor="w", pady=(10, 2))
         self.results_box = tk.Label(right_frame, text="", justify=tk.LEFT, font=("Courier", 10), bg="#f1f3f5", relief=tk.SOLID, bd=1, padx=12, pady=12)
         self.results_box.pack(fill=tk.X)
+
+    def _on_frame_configure(self, event):
+        """Recalculates scroll boundary dimensions dynamically when elements change size."""
+        self.enemies_canvas.configure(scrollregion=self.enemies_canvas.bbox("all"))
+
+    def _on_canvas_configure(self, event):
+        """Forces the entry rows container width layout to match the parent canvas frame size bounds."""
+        self.enemies_canvas.itemconfig(self.canvas_window, width=event.width)
 
     def add_enemy_row(self, name, base_exp="1", spawn_count="100"):
         if name in self.enemy_data:
