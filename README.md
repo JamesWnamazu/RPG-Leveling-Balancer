@@ -1,5 +1,5 @@
 # RPG-Leveling-Balancer
-A program made to assist in determine to the total number, and type of enemy encounters for turn-based RPG game development.
+A program made to assist in determining the total number and type of enemy encounters for turn-based RPG game development.
 
 # Universal Game Progression and Ecosystem Tuner
 An interactive, engine-agnostic desktop application built in Python using Tkinter and Matplotlib. This tool allows game designers to balance global player progression curves against macro world ecosystem distribution metrics.
