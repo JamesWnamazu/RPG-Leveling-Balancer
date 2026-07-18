@@ -14,11 +14,11 @@ An interactive, engine-agnostic desktop application built in Python using Tkinte
 * **Workspace Persistence:** Native structural verification mapping to import and export .json environment states safely.
 
 ## Installation and Quickstart
-Clone the repository to your desktop.
+1. Clone the repository to your desktop.
 
-Install the working dependencies using: pip install -r requirements.txt
+2. Install the working dependencies using: pip install -r requirements.txt
 
-Boot the desktop environment interface using: python levelingbalancer.py
+3. Boot the desktop environment interface using: python levelingbalancer.py
 
 # The Math Engine
 Instead of utilizing abstract weights, this application uses real population counts to handle normalization calculations. You design the base feel of an encounter (for example, a Rat yields 1 XP, a Boss yields 150 XP), specify how many exist across the map layout, and the engine stretches or shrinks those values down to 11 decimal places to align with your macro target level cap pool.
