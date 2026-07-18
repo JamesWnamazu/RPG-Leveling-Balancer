@@ -1,0 +1,11 @@
+# Python bytecode caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment/IDE directories
+.vscode/
+.idea/
+
+# Local data files
+*.json
