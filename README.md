@@ -2,18 +2,23 @@
 A program made to assist in determine to the total number, and type of enemy encounters for turn-based RPG game development.
 
 # Universal Game Progression and Ecosystem Tuner
-
-An interactive, engine-agnostic desktop application built in Python using **Tkinter** and **Matplotlib**. This tool allows game designers to balance global player progression curves against macro world ecosystem distribution metrics.
+An interactive, engine-agnostic desktop application built in Python using Tkinter and Matplotlib. This tool allows game designers to balance global player progression curves against macro world ecosystem distribution metrics.
 
 ## Key Features
 * **Dynamic Archetype Allocation:** Add, modify, or remove custom monster or encounter classes on the fly.
-* **Natural Ratio Scaling:** Uses a pure scaling equation (*scale_num = target_sum / current_sum*) to map designer-intended base weights directly to hard game progression targets.
+
+* **Natural Ratio Scaling:** Uses a pure scaling equation (scale_num = target_sum / current_sum) to map designer-intended base weights directly to hard game progression targets.
+
 * **Interactive Visualization:** Live plotting of Linear, Quadratic, and Cubic progression curves updating via real-time user input variables.
-* **Workspace Persistence:** Native structural verification mapping to import and export *.json* environment states safely.
+
+* **Workspace Persistence:** Native structural verification mapping to import and export .json environment states safely.
 
 ## Installation and Quickstart
+Clone the repository to your desktop.
 
-1. Clone the repository to your desktop.
-2. Install the working dependencies:
-   ```bash
-   pip install -r requirements.txt
+Install the working dependencies using: pip install -r requirements.txt
+
+Boot the desktop environment interface using: python levelingbalancer.py
+
+# The Math Engine
+Instead of utilizing abstract weights, this application uses real population counts to handle normalization calculations. You design the base feel of an encounter (for example, a Rat yields 1 XP, a Boss yields 150 XP), specify how many exist across the map layout, and the engine stretches or shrinks those values down to 11 decimal places to align with your macro target level cap pool.
