@@ -1,6 +1,3 @@
-# RPG-Leveling-Balancer
-A program made to assist in determining the total number and type of enemy encounters for turn-based RPG game development.
-
 <div align="center">
   <h1>RPG-Leveling-Balancer</h1>
   A program made to assist in determining the total number and type of enemy encounters for turn-based RPG game development.
