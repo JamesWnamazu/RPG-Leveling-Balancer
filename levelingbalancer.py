@@ -41,10 +41,10 @@ class GameProgressionEcosystemTuner:
         self.setup_layout()
         
         # Seed default archetypes
-        self.add_enemy_row("Weak Monster", "1", "1000")
-        self.add_enemy_row("Normal Monster", "5", "400")
-        self.add_enemy_row("Elite Combatant", "25", "80")
-        self.add_enemy_row("Boss Encounter", "150", "6")
+        self.add_enemy_row("Weak Enemy", "1", "1000")
+        self.add_enemy_row("Normal Enemy", "5", "400")
+        self.add_enemy_row("Elite Enemy", "25", "80")
+        self.add_enemy_row("Boss Enemy", "150", "6")
         
         self.update_calculations()
 
@@ -76,7 +76,7 @@ class GameProgressionEcosystemTuner:
         lower_right.pack(side=tk.BOTTOM, fill=tk.X)
         
         # --- SECTION 1: GLOBAL PROGRESSION TARGETS ---
-        tk.Label(self.left_frame, text="1. Global Macro Targets", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w")
+        tk.Label(self.left_frame, text="1. Game Targets", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w")
         
         tk.Label(self.left_frame, text="Target Global EXP Pool (Total to reach Max Lvl):", bg="#f8f9fa").pack(anchor="w", pady=(5,0))
         self.target_exp_entry = tk.Entry(self.left_frame, font=("Arial", 11))
@@ -89,7 +89,7 @@ class GameProgressionEcosystemTuner:
         self.max_level_slider.set(50)
         self.max_level_slider.pack(fill=tk.X, pady=(0, 5))
         
-        tk.Label(self.left_frame, text="Level Progression Curve Geometry:", bg="#f8f9fa").pack(anchor="w")
+        tk.Label(self.left_frame, text="Level Curve Style:", bg="#f8f9fa").pack(anchor="w")
         self.curve_style_var = tk.StringVar(value="Quadratic")
         curve_dropdown = ttk.OptionMenu(self.left_frame, self.curve_style_var, "Quadratic", "Linear", "Quadratic", "Cubic", command=lambda v: self.update_calculations())
         curve_dropdown.pack(fill=tk.X, pady=(0, 15))
@@ -97,7 +97,7 @@ class GameProgressionEcosystemTuner:
         ttk.Separator(self.left_frame, orient='horizontal').pack(fill='x', pady=10)
         
         # --- SECTION 2: DYNAMIC SCROLLABLE ECOSYSTEM LIST CONTAINER ---
-        tk.Label(self.left_frame, text="2. Enemy Population & Base Yields", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w", pady=(0, 5))
+        tk.Label(self.left_frame, text="2. Enemy Ratios & Base Exp", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w", pady=(0, 5))
         
         headers = tk.Frame(self.left_frame, bg="#f8f9fa")
         headers.pack(fill=tk.X, pady=(0, 5))
@@ -157,7 +157,7 @@ class GameProgressionEcosystemTuner:
         stats_wrapper = tk.Frame(lower_right, bg="white")
         stats_wrapper.pack(fill=tk.X, side=tk.LEFT, expand=True)
         
-        tk.Label(stats_wrapper, text="Ecosystem Normalization Matrices", font=("Arial", 11, "bold"), bg="white").pack(anchor="w")
+        tk.Label(stats_wrapper, text="XP Summary", font=("Arial", 11, "bold"), bg="white").pack(anchor="w")
         self.results_box = tk.Label(stats_wrapper, text="", justify=tk.LEFT, font=("Courier", 10), bg="#f1f3f5", relief=tk.SOLID, bd=1, padx=12, pady=12)
         self.results_box.pack(fill=tk.X, pady=(5, 0))
         
@@ -453,7 +453,7 @@ class GameProgressionEcosystemTuner:
             self.pacing_tree.insert("", tk.END, values=(name, kills_str))
             
         text_feed += "=" * 82 + "\n"
-        text_feed += f"Ecosystem Check Target Balance Verification: {verification_sum:,.2f} / {target_global_exp:,.2f} EXP"
+        text_feed += f"Total Calculated XP: {verification_sum:,.2f} / {target_global_exp:,.2f} EXP"
         self.results_box.config(text=text_feed)
 
 if __name__ == "__main__":
