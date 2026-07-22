@@ -1,11 +1,24 @@
+import sys
+import os
+import json
+import csv
+import numpy as np
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import numpy as np
-import json
-import csv
+
+# --- 0. ASSET PATH RESOLVER ---
+def resource_path(relative_path):
+    """Gets the absolute path to a resource, handling PyInstaller temporary runtime folders."""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # --- 1. PROGRESSION CURVE CALCULATION ---
 def calculate_level_curve(max_level, curve_style, total_desired_exp):
@@ -23,7 +36,6 @@ def calculate_level_curve(max_level, curve_style, total_desired_exp):
     if total_weight == 0: total_weight = 1.0
         
     # Distribute the total EXP across the relative curve structure
-    # level_requirements[0] is now the exact EXP required to clear Level 1 and hit Level 2
     level_requirements = (raw_weights / total_weight) * total_desired_exp
     return levels, level_requirements
 
@@ -33,6 +45,12 @@ class GameProgressionEcosystemTuner:
         self.root = root
         self.root.title("RPG Leveling Balancer")
         self.root.geometry("1350x820")
+        
+        # Hard-kill process on window exit to prevent orphaned background instances
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
+        # Load app icon (replaces default Tkinter feather icon)
+        self.set_app_icon("logo.png")
         
         # Track active enemy rows
         self.enemy_data = {}
@@ -48,6 +66,37 @@ class GameProgressionEcosystemTuner:
         
         self.update_calculations()
 
+    def set_app_icon(self, icon_name):
+        """Loads and applies a PNG icon to the window titlebar, taskbar, and popups."""
+        icon_path = resource_path(icon_name)
+        
+        # Explicit Windows AppUserModelID registration so the taskbar displays the custom icon
+        if sys.platform.startswith("win"):
+            try:
+                import ctypes
+                myappid = "mygamedev.levelingbalancer.tuner.1.0"
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+            except Exception:
+                pass
+
+        if os.path.exists(icon_path):
+            try:
+                # Stored on self to prevent Python garbage collection from destroying the image handle
+                self.app_icon = tk.PhotoImage(file=icon_path)
+                self.root.iconphoto(True, self.app_icon)
+            except Exception as e:
+                print(f"Icon loading warning: {e}")
+
+    def on_closing(self):
+        """Ensures the entire Python process is hard-killed when closing the app."""
+        try:
+            self.root.quit()
+            self.root.destroy()
+        except Exception:
+            pass
+        finally:
+            sys.exit(0)
+
     def setup_menu(self):
         menubar = tk.Menu(self.root)
         filemenu = tk.Menu(menubar, tearoff=0)
@@ -55,7 +104,7 @@ class GameProgressionEcosystemTuner:
         filemenu.add_command(label="Export Configuration (.json)", command=self.export_config)
         filemenu.add_command(label="Export Engine Data (.csv)", command=self.export_csv)
         filemenu.add_separator()
-        filemenu.add_command(label="Exit", command=self.root.quit)
+        filemenu.add_command(label="Exit", command=self.on_closing)
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
@@ -97,7 +146,7 @@ class GameProgressionEcosystemTuner:
         ttk.Separator(self.left_frame, orient='horizontal').pack(fill='x', pady=10)
         
         # --- SECTION 2: DYNAMIC SCROLLABLE ECOSYSTEM LIST CONTAINER ---
-        tk.Label(self.left_frame, text="2. Enemy Ratios & Base Exp", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w", pady=(0, 5))
+        tk.Label(self.left_frame, text="2. Enemy Ratios & Base XP", font=("Arial", 12, "bold"), bg="#f8f9fa").pack(anchor="w", pady=(0, 5))
         
         headers = tk.Frame(self.left_frame, bg="#f8f9fa")
         headers.pack(fill=tk.X, pady=(0, 5))
@@ -167,7 +216,7 @@ class GameProgressionEcosystemTuner:
         pacing_header_frame = tk.Frame(pacing_wrapper, bg="white")
         pacing_header_frame.pack(fill=tk.X, anchor="w")
         
-        self.pacing_title_var = tk.StringVar(value="Kills to reach Level 2")
+        self.pacing_title_var = tk.StringVar(value="Kills Needed for Level 2")
         self.pacing_label = tk.Label(pacing_header_frame, textvariable=self.pacing_title_var, font=("Arial", 11, "bold"), bg="white")
         self.pacing_label.pack(side=tk.LEFT)
         
@@ -210,14 +259,12 @@ class GameProgressionEcosystemTuner:
             self.canvas.draw_idle()
             return
 
-        # Find closest level anchor point index on x-axis coordinates
         mouse_x = event.xdata
         idx = (np.abs(self.cached_levels - mouse_x)).argmin()
         
         target_lvl = self.cached_levels[idx]
         target_exp = self.cached_requirements[idx]
 
-        # Relocate interactive overlay elements
         self.hover_dot.set_data([target_lvl], [target_exp])
         self.hover_dot.set_visible(True)
         
@@ -381,7 +428,7 @@ class GameProgressionEcosystemTuner:
         except ValueError:
             chosen_target_level = 2
             
-        self.pacing_title_var.set(f"Kills to reach Level {chosen_target_level}")
+        self.pacing_title_var.set(f"Kills Needed for Level {chosen_target_level}")
         
         total_natural_yield_pool = 0.0
         parsed_ecosystem = {}
@@ -432,7 +479,6 @@ class GameProgressionEcosystemTuner:
             self.pacing_tree.delete(row)
             
         # The exact EXP needed to advance from chosen_target_level - 1 into chosen_target_level
-        # Array index maps directly to (level - 1)
         exp_gap_for_target_lvl = level_requirements[chosen_target_level - 1]
         
         for name, data in parsed_ecosystem.items():
