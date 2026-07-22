@@ -1,7 +1,7 @@
 <div align="center">
   <img src="logo.png" alt="App Logo" width="200">
 
-  # RPG Leveling Balancer & Ecosystem Tuner
+  # RPG Leveling Balancer
   
   **An interactive, engine-agnostic desktop tool for balancing RPG progression curves against world population metrics.**
 
@@ -29,7 +29,7 @@ Instead of forcing you to tweak raw numbers trial-by-trial, this tool allows you
 * **Dynamic Archetype Allocation:** Add, modify, or remove custom monster or encounter classes on the fly with live UI recalculations.
 * **Natural Ratio Scaling:** Uses a pure scaling equation (`scale_num = target_sum / current_sum`) to map designer-intended base weights directly to hard game progression targets.
 * **Interactive Visualization:** Live plotting of **Linear**, **Quadratic**, and **Cubic** progression curves with interactive cursor anchor tracking.
-* **Pacing Analytics:** Select any target level (e.g., Level 2) to instantly view exact kill counts required per enemy class.
+* **Pacing Analytics:** Select any target level (e.g., Level 2) to view exact kill counts required per enemy class instantly.
 * **Workspace Persistence & Data Export:** 
   * Import and export `.json` workspace state files.
   * Export normalized engine matrices directly to `.csv` for game engine integration (Unity, Unreal, Godot).
