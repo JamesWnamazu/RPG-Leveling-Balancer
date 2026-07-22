@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="logo.png" alt="App Logo" width="400">
+</div>
+
 # RPG-Leveling-Balancer</h1>
 A program made to assist in determining the total number and type of enemy encounters for turn-based RPG game development.
 
